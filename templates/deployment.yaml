@@ -14,6 +14,7 @@ spec:
       labels:
         {{- include "payment-service.selectorLabels" . | nindent 8 }}
     spec:
+      serviceAccountName: {{ include "payment-service.fullname" . }}
       {{- with .Values.image.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}

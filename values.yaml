@@ -13,6 +13,11 @@ istio:
   host: "payment-service"
   mtls:
     mode: STRICT
+  authorization:
+    internalCallers:
+      - "cluster.local/ns/fitnest-dev/sa/user-service"
+      - "cluster.local/ns/fitnest-dev/sa/iam-service"
+      - "cluster.local/ns/fitnest-dev/sa/subscription-service"
 env:
   SPRING_DATASOURCE_URL: "jdbc:postgresql://postgresql-payment:5432/fitnest_payment"
   SPRING_DATASOURCE_USERNAME: "fitnest_payment"
