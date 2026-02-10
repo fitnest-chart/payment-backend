@@ -1,7 +1,7 @@
 replicaCount: 1
 image:
   repository: ghcr.io/fitnest-backend/payment-service
-  tag: "development-c5be1d1"
+  tag: "development-8910bb6"
   pullPolicy: IfNotPresent
   imagePullSecrets:
     - name: ghcr-secret
@@ -36,7 +36,6 @@ env:
   identity-service: "cluster.local/ns/fitnest-dev/sa/identity-service"
   order-service: "cluster.local/ns/fitnest-dev/sa/order-service"
   api-gateway: "cluster.local/ns/fitnest-dev/sa/api-gateway"
-
 livenessProbe:
   httpGet:
     path: /actuator/health
@@ -49,7 +48,6 @@ readinessProbe:
     port: http
   initialDelaySeconds: 20
   periodSeconds: 10
-
 resources:
   requests:
     cpu: 100m
