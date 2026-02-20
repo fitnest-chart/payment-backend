@@ -8,6 +8,7 @@ image:
 service:
   type: ClusterIP
   port: 8080
+  grpcPort: 9090
 istio:
   enabled: true
   host: "payment-service"
@@ -37,9 +38,9 @@ env:
   KAFKA_BOOTSTRAP_SERVERS: "kafka-service:9092"
   JWT_SECRET: "your-jwt-secret-change-in-production"
   JWT_ISSUER: "fitnest"
-  IDENTITY_SERVICE_URL: "http://identity-service:8080"
-  USER_SERVICE_URL: "http://user-service:8080"
-  ORDER_SERVICE_URL: "http://order-service:8080"
+  IDENTITY_SERVICE_URL: "http://identity-service:9090"
+  USER_SERVICE_URL: "http://user-service:9090"
+  ORDER_SERVICE_URL: "http://order-service:9090"
   JAVA_OPTS: "-XX:TieredStopAtLevel=1 -Xss256k -Xmx448m"
 resources:
   limits:
