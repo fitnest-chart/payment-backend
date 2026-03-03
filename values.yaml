@@ -42,11 +42,11 @@ env:
   IDENTITY_SERVICE_URL: "http://identity-service:8080"
   USER_SERVICE_URL: "http://user-service:8080"
   ORDER_SERVICE_URL: "http://order-service:8080"
-  JAVA_OPTS: "-Xmx480m -Xms256m -XX:+UseZGC -Xss256k"
+  JAVA_OPTS: "-Xmx640m -Xms384m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+ParallelRefProcEnabled -XX:MaxMetaspaceSize=192m -Xss512k -XX:+ExitOnOutOfMemoryError"
 resources:
   limits:
     memory: 1024Mi
     cpu: 500m
   requests:
     cpu: 250m
-    memory: 512Mi
+    memory: 700Mi
