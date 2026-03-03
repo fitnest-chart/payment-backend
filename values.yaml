@@ -42,7 +42,7 @@ env:
   IDENTITY_SERVICE_URL: "http://identity-service:8080"
   USER_SERVICE_URL: "http://user-service:8080"
   ORDER_SERVICE_URL: "http://order-service:8080"
-  JAVA_OPTS: "-Xmx384m -Xms192m -XX:+UseZGC -Xss256k"
+  JAVA_OPTS: "-Xmx480m -Xms256m -XX:+UseZGC -Xss256k"
 resources:
   limits:
     memory: 1024Mi
