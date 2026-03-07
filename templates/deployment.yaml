@@ -31,11 +31,18 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port}}
               protocol: TCP
-          {{- if .Values.env}}
+          {{- if or .Values.env .Values.envSecrets}}
           env:
           {{- range $key, $value := .Values.env}}
           - name: {{ $key}}
             value: {{ $value | quote}}
+          {{- end}}
+          {{- range $key, $secret := .Values.envSecrets}}
+          - name: {{ $key}}
+            valueFrom:
+              secretKeyRef:
+                name: {{ $secret.secretName}}
+                key: {{ $secret.secretKey}}
           {{- end}}
           {{- end}}
           {{- if .Values.livenessProbe}}
