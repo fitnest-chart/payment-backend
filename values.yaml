@@ -43,8 +43,8 @@ env:
   USER_SERVICE_URL: "http://user-service:8080"
   ORDER_SERVICE_URL: "http://order-service:8080"
   JAVA_TOOL_OPTIONS: >
-    -Xms128m
-    -Xmx384m
+    -Xms256m
+    -Xmx768m
     -XX:+UseG1GC
     -XX:MaxGCPauseMillis=200
     -XX:+ParallelRefProcEnabled
@@ -61,8 +61,8 @@ envSecrets:
     secretKey: private-key
 resources:
   requests:
-    cpu: 150m
-    memory: 384Mi
-  limits:
-    cpu: 800m
+    cpu: 200m
     memory: 768Mi
+  limits:
+    cpu: 1000m
+    memory: 1536Mi
