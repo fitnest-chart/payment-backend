@@ -42,7 +42,16 @@ env:
   IDENTITY_SERVICE_URL: "http://identity-service:8080"
   USER_SERVICE_URL: "http://user-service:8080"
   ORDER_SERVICE_URL: "http://order-service:8080"
-  JAVA_TOOL_OPTIONS: "-Xms256m -Xmx400m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+ParallelRefProcEnabled -XX:MaxMetaspaceSize=128m -Xss512k -XX:+ExitOnOutOfMemoryError"
+  JAVA_TOOL_OPTIONS: >
+    -Xms256m
+    -Xmx512m
+    -XX:+UseG1GC
+    -XX:MaxGCPauseMillis=200
+    -XX:+ParallelRefProcEnabled
+    -XX:MaxMetaspaceSize=160m
+    -XX:+AlwaysPreTouch
+    -Xss512k
+    -XX:+ExitOnOutOfMemoryError
 envSecrets:
   EPOINT_PUBLIC_KEY:
     secretName: epoint-secret
@@ -52,8 +61,8 @@ envSecrets:
     secretKey: private-key
 resources:
   requests:
-    cpu: 150m
-    memory: 450Mi
+    cpu: 200m
+    memory: 512Mi
   limits:
-    cpu: 500m
-    memory: 800Mi
+    cpu: 1000m
+    memory: 1Gi
