@@ -1,57 +1,64 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "payment-service.fullname" .}}
+  name: {{ include "payment-service.fullname" . }}
   labels:
-    {{- include "payment-service.labels" . | nindent 4}}
+    {{- include "payment-service.labels" . | nindent 4 }}
+  {{- if .Values.istio.enabled }}
+  annotations:
+    sidecar.istio.io/inject: "true"
+  {{- end }}
 spec:
-  replicas: {{ .Values.replicaCount}}
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "payment-service.selectorLabels" . | nindent 6}}
+      {{- include "payment-service.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "payment-service.selectorLabels" . | nindent 8}}
-      annotations:
-        {{- if .Values.istio.enabled}}
-        sidecar.istio.io/inject: "true"
-        {{- end}}
+        {{- include "payment-service.selectorLabels" . | nindent 8 }}
     spec:
-      serviceAccountName: {{ include "payment-service.fullname" .}}
-      {{- with .Values.image.imagePullSecrets}}
+      serviceAccountName: {{ include "payment-service.fullname" . }}
+      {{- with .Values.image.imagePullSecrets }}
       imagePullSecrets:
-        {{- toYaml . | nindent 8}}
-      {{- end}}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
-        - name: {{ .Chart.Name}}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy}}
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.port}}
+              containerPort: {{ .Values.service.port }}
               protocol: TCP
-          {{- if or .Values.env .Values.envSecrets}}
           env:
-          {{- range $key, $value := .Values.env}}
-          - name: {{ $key}}
-            value: {{ $value | quote}}
-          {{- end}}
-          {{- range $key, $secret := .Values.envSecrets}}
-          - name: {{ $key}}
-            valueFrom:
-              secretKeyRef:
-                name: {{ $secret.secretName}}
-                key: {{ $secret.secretKey}}
-          {{- end}}
-          {{- end}}
-          {{- if .Values.livenessProbe}}
+            - name: EPOINT_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: epoint-secret
+                  key: public-key
+            - name: EPOINT_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: epoint-secret
+                  key: private-key
+            - name: EPOINT_BASE_URL
+              value: {{ .Values.epoint.baseUrl }}
+            - name: EPOINT_RESULT_URL
+              value: {{ .Values.epoint.resultUrl }}
+            - name: EPOINT_SUCCESS_REDIRECT_URL
+              value: {{ .Values.epoint.successRedirectUrl }}
+            - name: EPOINT_ERROR_REDIRECT_URL
+              value: {{ .Values.epoint.errorRedirectUrl }}
+          {{- if .Values.livenessProbe }}
           livenessProbe:
-{{ toYaml .Values.livenessProbe | nindent 12}}
-          {{- end}}
-          {{- if .Values.readinessProbe}}
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.readinessProbe }}
           readinessProbe:
-{{ toYaml .Values.readinessProbe | nindent 12}}
-          {{- end}}
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.resources }}
           resources:
-{{ toYaml .Values.resources | nindent 12}}
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- end }}
