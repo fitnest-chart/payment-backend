@@ -75,14 +75,7 @@ spec:
               value: "{{ .Values.env.KAFKA_BOOTSTRAP_SERVERS }}"
             - name: JWT_SECRET
               value: "{{ .Values.env.JWT_SECRET }}"
-          {{- if .Values.livenessProbe }}
-          livenessProbe:
-            {{- toYaml .Values.livenessProbe | nindent 12 }}
-          {{- end }}
-          {{- if .Values.readinessProbe }}
-          readinessProbe:
-            {{- toYaml .Values.readinessProbe | nindent 12 }}
-          {{- end }}
+
           {{- if .Values.resources }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
