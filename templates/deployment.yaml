@@ -31,6 +31,9 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+            - name: grpc
+              containerPort: {{ .Values.service.grpcPort }}
+              protocol: TCP
           env:
             - name: EPOINT_PUBLIC_KEY
               valueFrom:
