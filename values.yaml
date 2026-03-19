@@ -64,8 +64,8 @@ epoint:
   errorRedirectUrl: https://dev-api.fitnest.az/payment/error
 resources:
   requests:
-    cpu: 400m
-    memory: 512Mi
+    cpu: 20m
+    memory: 564Mi
   limits:
     cpu: 1000m
-    memory: 1024Mi
+    memory: 868Mi
