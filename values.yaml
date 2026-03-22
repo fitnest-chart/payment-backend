@@ -59,9 +59,9 @@ envSecrets:
 epoint:
   # Sensitive values are managed via Kubernetes Secrets, not here.
   baseUrl: https://epoint.az/api/1
-  resultUrl: https://dev-api.fitnest.az/payment/epoint/callback
-  successRedirectUrl: https://dev-api.fitnest.az/payment/success
-  errorRedirectUrl: https://dev-api.fitnest.az/payment/error
+  resultUrl: https://dev-api.fitnest.az/payment/callback
+  successRedirectUrl: https://fitnest.az/payment/success
+  errorRedirectUrl: https://fitnest.az/payment/error
 resources:
   requests:
     cpu: 20m
