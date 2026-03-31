@@ -50,9 +50,15 @@ spec:
             - name: EPOINT_RESULT_URL
               value: "{{ .Values.epoint.resultUrl }}"
             - name: EPOINT_SUCCESS_REDIRECT_URL
-              value: "{{ .Values.epoint.successRedirectUrl }}"
+              valueFrom:
+                secretKeyRef:
+                  name: epoint-url-secret
+                  key: success-redirect-url
             - name: EPOINT_ERROR_REDIRECT_URL
-              value: "{{ .Values.epoint.errorRedirectUrl }}"
+              valueFrom:
+                secretKeyRef:
+                  name: epoint-url-secret
+                  key: error-redirect-url
             - name: SPRING_PROFILES_ACTIVE
               value: "{{ .Values.env.SPRING_PROFILES_ACTIVE }}"
             - name: SPRINGDOC_SERVER_URL
