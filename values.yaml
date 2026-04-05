@@ -43,7 +43,6 @@ env:
   USER_SERVICE_URL: "http://user-service:8080"
   ORDER_SERVICE_URL: "http://order-service:8080"
   STORAGE_SERVICE_URL: "http://storage-service:8080"
-  # Optional: enable gRPC-based storage client instead of HTTP. When true, set STORAGE_GRPC_ADDRESS.
   USE_GRPC_STORAGE: "false"
   STORAGE_GRPC_ADDRESS: "dns:///storage-service.fitnest-dev.svc.cluster.local:9090"
   JAVA_TOOL_OPTIONS: >
@@ -57,12 +56,8 @@ envSecrets:
     secretName: epoint-secret
     secretKey: private-key
 epoint:
-  # Sensitive values are managed via Kubernetes Secrets, not here.
   baseUrl: https://epoint.az/api/1
   resultUrl: https://dev-api.fitnest.az/payment/callback
-  # successRedirectUrl and errorRedirectUrl are now managed via Kubernetes secret 'epoint-url-secret'.
-  # successRedirectUrl: https://fitnest.az/payment/success
-  # errorRedirectUrl: https://fitnest.az/payment/error
 resources:
   requests:
     cpu: 20m
