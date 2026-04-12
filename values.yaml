@@ -1,7 +1,9 @@
+# values.yaml for payment-backend
+
 replicaCount: 1
 
 image:
-  repository: ghcr.io/fitnest-backend/payment-service
+  repository: ghcr.io/fitnest-code/payment-backend
   tag: "development-74d26fd"
   pullPolicy: IfNotPresent
   imagePullSecrets:
@@ -15,9 +17,9 @@ service:
 networkPolicy:
   enabled: true
   allowedServices:
-    - user-service
-    - identity-service
-    - order-service
+    - user-backend
+    - identity-backend
+    - order-backend
     # api-gateway is already hardcoded in the policy template
 
 hpa:
@@ -40,12 +42,12 @@ env:
   KAFKA_BOOTSTRAP_SERVERS: "10.0.0.4:9092"
   JWT_SECRET: "your-jwt-secret-change-in-production"
   JWT_ISSUER: "fitnest"
-  IDENTITY_SERVICE_URL: "http://identity-service:8080"
-  USER_SERVICE_URL: "http://user-service:8080"
-  ORDER_SERVICE_URL: "http://order-service:8080"
-  STORAGE_SERVICE_URL: "http://storage-service:8080"
+  IDENTITY_SERVICE_URL: "http://identity-backend:8080"
+  USER_SERVICE_URL: "http://user-backend:8080"
+  ORDER_SERVICE_URL: "http://order-backend:8080"
+  STORAGE_SERVICE_URL: "http://storage-backend:8080"
   USE_GRPC_STORAGE: "false"
-  STORAGE_GRPC_ADDRESS: "dns:///storage-service.fitnest-dev.svc.cluster.local:9090"
+  STORAGE_GRPC_ADDRESS: "dns:///storage-backend.fitnest-dev.svc.cluster.local:9090"
   JAVA_TOOL_OPTIONS: >
     -Xms256m -Xmx512m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+ParallelRefProcEnabled -XX:MaxMetaspaceSize=256m -XX:+AlwaysPreTouch -Xss512k -XX:+ExitOnOutOfMemoryError
 
