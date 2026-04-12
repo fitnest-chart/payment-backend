@@ -4,10 +4,6 @@ metadata:
   name: {{ include "payment-service.fullname" . }}
   labels:
     {{- include "payment-service.labels" . | nindent 4 }}
-  {{- if .Values.istio.enabled }}
-  annotations:
-    sidecar.istio.io/inject: "true"
-  {{- end }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -24,7 +20,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
-        - name: payment-service
+        - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
@@ -46,9 +42,9 @@ spec:
                   name: epoint-secret
                   key: private-key
             - name: EPOINT_BASE_URL
-              value: "{{ .Values.epoint.baseUrl }}"
+              value: {{ .Values.epoint.baseUrl | quote }}
             - name: EPOINT_RESULT_URL
-              value: "{{ .Values.epoint.resultUrl }}"
+              value: {{ .Values.epoint.resultUrl | quote }}
             - name: EPOINT_SUCCESS_REDIRECT_URL
               valueFrom:
                 secretKeyRef:
@@ -60,29 +56,42 @@ spec:
                   name: epoint-url-secret
                   key: error-redirect-url
             - name: SPRING_PROFILES_ACTIVE
-              value: "{{ .Values.env.SPRING_PROFILES_ACTIVE }}"
+              value: {{ .Values.env.SPRING_PROFILES_ACTIVE | quote }}
             - name: SPRINGDOC_SERVER_URL
-              value: "{{ .Values.env.SPRINGDOC_SERVER_URL }}"
+              value: {{ .Values.env.SPRINGDOC_SERVER_URL | quote }}
             - name: SPRING_DATASOURCE_URL
-              value: "{{ .Values.env.SPRING_DATASOURCE_URL }}"
+              value: {{ .Values.env.SPRING_DATASOURCE_URL | quote }}
             - name: SPRING_DATASOURCE_USERNAME
-              value: "{{ .Values.env.SPRING_DATASOURCE_USERNAME }}"
+              value: {{ .Values.env.SPRING_DATASOURCE_USERNAME | quote }}
             - name: SPRING_DATASOURCE_PASSWORD
-              value: "{{ .Values.env.SPRING_DATASOURCE_PASSWORD }}"
+              value: {{ .Values.env.SPRING_DATASOURCE_PASSWORD | quote }}
             - name: SPRING_JPA_HIBERNATE_DDL_AUTO
-              value: "{{ .Values.env.SPRING_JPA_HIBERNATE_DDL_AUTO }}"
+              value: {{ .Values.env.SPRING_JPA_HIBERNATE_DDL_AUTO | quote }}
             - name: SPRING_DATA_REDIS_HOST
-              value: "{{ .Values.env.SPRING_DATA_REDIS_HOST }}"
+              value: {{ .Values.env.SPRING_DATA_REDIS_HOST | quote }}
             - name: SPRING_DATA_REDIS_PORT
-              value: "{{ .Values.env.SPRING_DATA_REDIS_PORT }}"
+              value: {{ .Values.env.SPRING_DATA_REDIS_PORT | quote }}
             - name: SPRING_DATA_REDIS_PASSWORD
-              value: "{{ .Values.env.SPRING_DATA_REDIS_PASSWORD }}"
+              value: {{ .Values.env.SPRING_DATA_REDIS_PASSWORD | quote }}
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "{{ .Values.env.KAFKA_BOOTSTRAP_SERVERS }}"
+              value: {{ .Values.env.KAFKA_BOOTSTRAP_SERVERS | quote }}
             - name: JWT_SECRET
-              value: "{{ .Values.env.JWT_SECRET }}"
-
-          {{- if .Values.resources }}
+              value: {{ .Values.env.JWT_SECRET | quote }}
+            - name: JWT_ISSUER
+              value: {{ .Values.env.JWT_ISSUER | quote }}
+            - name: IDENTITY_SERVICE_URL
+              value: {{ .Values.env.IDENTITY_SERVICE_URL | quote }}
+            - name: USER_SERVICE_URL
+              value: {{ .Values.env.USER_SERVICE_URL | quote }}
+            - name: ORDER_SERVICE_URL
+              value: {{ .Values.env.ORDER_SERVICE_URL | quote }}
+            - name: STORAGE_SERVICE_URL
+              value: {{ .Values.env.STORAGE_SERVICE_URL | quote }}
+            - name: USE_GRPC_STORAGE
+              value: {{ .Values.env.USE_GRPC_STORAGE | quote }}
+            - name: STORAGE_GRPC_ADDRESS
+              value: {{ .Values.env.STORAGE_GRPC_ADDRESS | quote }}
+            - name: JAVA_TOOL_OPTIONS
+              value: {{ .Values.env.JAVA_TOOL_OPTIONS | quote }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- end }}

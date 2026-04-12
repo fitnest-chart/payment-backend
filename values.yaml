@@ -1,42 +1,43 @@
 replicaCount: 1
+
 image:
   repository: ghcr.io/fitnest-backend/payment-service
   tag: "development-74d26fd"
   pullPolicy: IfNotPresent
   imagePullSecrets:
     - name: ghcr-secret
+
 service:
   type: ClusterIP
   port: 8080
   grpcPort: 9090
-istio:
+
+networkPolicy:
   enabled: true
-  host: "payment-service"
-  mtls:
-    mode: STRICT
-  authorization:
-    internalCallers:
-      - "cluster.local/ns/fitnest-dev/sa/user-service"
-      - "cluster.local/ns/fitnest-dev/sa/identity-service"
-      - "cluster.local/ns/fitnest-dev/sa/order-service"
-      - "cluster.local/ns/fitnest-dev/sa/api-gateway"
+  allowedServices:
+    - user-service
+    - identity-service
+    - order-service
+    # api-gateway is already hardcoded in the policy template
+
 hpa:
   enabled: false
   minReplicas: "1"
   maxReplicas: "3"
   cpuUtilization: "90"
   memoryUtilization: "450Mi"
+
 env:
   SPRING_PROFILES_ACTIVE: "dev"
   SPRINGDOC_SERVER_URL: "https://dev-api.fitnest.az"
-  SPRING_DATASOURCE_URL: "jdbc:postgresql://postgresql-shared:5432/fitnest_payment"
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://10.0.0.4:5432/fitnest_payment?sslmode=disable"
   SPRING_DATASOURCE_USERNAME: "postgres"
   SPRING_DATASOURCE_PASSWORD: "shared_password_root_123"
   SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
-  SPRING_DATA_REDIS_HOST: "redis"
-  SPRING_DATA_REDIS_PORT: "6379"
-  SPRING_DATA_REDIS_PASSWORD: ""
-  KAFKA_BOOTSTRAP_SERVERS: "kafka-service:9092"
+  SPRING_DATA_REDIS_HOST: "10.0.0.4"
+  SPRING_DATA_REDIS_PORT: "6380"
+  SPRING_DATA_REDIS_PASSWORD: "ChangeMeDevRedis!"
+  KAFKA_BOOTSTRAP_SERVERS: "10.0.0.4:9092"
   JWT_SECRET: "your-jwt-secret-change-in-production"
   JWT_ISSUER: "fitnest"
   IDENTITY_SERVICE_URL: "http://identity-service:8080"
@@ -55,9 +56,11 @@ envSecrets:
   EPOINT_PRIVATE_KEY:
     secretName: epoint-secret
     secretKey: private-key
+
 epoint:
   baseUrl: https://epoint.az/api/1
   resultUrl: https://dev-api.fitnest.az/payment/callback
+
 resources:
   requests:
     cpu: 20m
