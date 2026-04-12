@@ -1,6 +1,6 @@
 apiVersion: v2
-name: payment-service
-description: A Helm chart for payment-service
+name: payment-backend
+description: A Helm chart for payment-backend
 type: application
 version: 1.0.0
 appVersion: "1.0.0"

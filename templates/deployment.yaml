@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "payment-service.fullname" . }}
+  name: {{ include "app.fullname" . }}
   labels:
-    {{- include "payment-service.labels" . | nindent 4 }}
+    {{- include "app.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "payment-service.selectorLabels" . | nindent 6 }}
+      {{- include "app.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "payment-service.selectorLabels" . | nindent 8 }}
+        {{- include "app.selectorLabels" . | nindent 8 }}
     spec:
-      serviceAccountName: {{ include "payment-service.fullname" . }}
+      serviceAccountName: {{ include "app.fullname" . }}
       {{- with .Values.image.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
