@@ -1,19 +1,16 @@
 # values.yaml for payment-backend
 
 replicaCount: 1
-
 image:
   repository: ghcr.io/fitnest-code/payment-backend
-  tag: "development-74d26fd"
+  tag: "development-d57e1a9"
   pullPolicy: IfNotPresent
   imagePullSecrets:
     - name: ghcr-secret
-
 service:
   type: ClusterIP
   port: 8080
   grpcPort: 9090
-
 networkPolicy:
   enabled: true
   allowedServices:
@@ -21,14 +18,12 @@ networkPolicy:
     - identity-backend
     - order-backend
     # api-gateway is already hardcoded in the policy template
-
 hpa:
   enabled: false
   minReplicas: "1"
   maxReplicas: "3"
   cpuUtilization: "90"
   memoryUtilization: "450Mi"
-
 env:
   SPRING_PROFILES_ACTIVE: "dev"
   SPRINGDOC_SERVER_URL: "https://dev-api.fitnest.az"
@@ -58,11 +53,9 @@ envSecrets:
   EPOINT_PRIVATE_KEY:
     secretName: epoint-secret
     secretKey: private-key
-
 epoint:
   baseUrl: https://epoint.az/api/1
   resultUrl: https://dev-api.fitnest.az/payment/callback
-
 resources:
   requests:
     cpu: 20m
