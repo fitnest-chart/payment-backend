@@ -4,7 +4,7 @@ vaultEnv: development
 replicaCount: 1
 image:
   repository: ghcr.io/fitnest-code/payment-backend
-  tag: "development-564813f"
+  tag: "development-913f158"
   pullPolicy: IfNotPresent
   imagePullSecrets:
     - name: ghcr-secret
