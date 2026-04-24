@@ -1,6 +1,6 @@
 epoint:
   baseUrl: https://epoint.az/api/1
-  resultUrl: https://dev-api.fitnest.az/payment/callback
+  resultUrl: https://api.fitnest.az/payment/callback
 hpa:
   cpuUtilization: '90'
   enabled: false
