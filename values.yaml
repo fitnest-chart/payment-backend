@@ -27,8 +27,9 @@ security:
   requireInternalToken: false
   # Swagger UI and the OpenAPI document are not served publicly in production.
   exposeDocs: false
-kafka:
-  bootstrapServers: kafka-service.fitnest-production.svc.cluster.local:9092
+# NOTE: KAFKA_BOOTSTRAP_SERVERS is deliberately NOT set here. It comes from Vault
+# (secrets/payment-backend/production). An env var would take precedence over the
+# Vault property source and override the correct broker address.
 resources:
   requests:
     cpu: 200m

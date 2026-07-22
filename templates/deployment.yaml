@@ -87,10 +87,6 @@ spec:
             - name: APP_SECURITY_EXPOSE_DOCS
               value: {{ .exposeDocs | default false | quote }}
             {{- end }}
-            {{- with .Values.kafka }}
-            - name: KAFKA_BOOTSTRAP_SERVERS
-              value: {{ .bootstrapServers | quote }}
-            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           # The JVM needs time to boot before it can serve; the startup probe holds the other
