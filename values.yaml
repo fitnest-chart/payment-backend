@@ -19,8 +19,11 @@ networkPolicy:
     - identity-backend
     - order-backend
   enabled: true
-# Two replicas so a rollout, node drain, or single-pod crash is not a payment outage.
-replicaCount: 2
+# Held at 1 while the cluster is memory-constrained (worker nodes are overcommitted
+# on limits). Rollouts are still zero-downtime via maxUnavailable:0 + maxSurge:1, but
+# a node failure is an outage until rescheduled. Raise to 2 when there is headroom --
+# the PodDisruptionBudget and topology spread turn on automatically above 1.
+replicaCount: 1
 terminationGracePeriodSeconds: 45
 security:
   # Enable once gateway-backend sends X-Internal-Token on proxied requests.
