@@ -19,7 +19,16 @@ networkPolicy:
     - identity-backend
     - order-backend
   enabled: true
-replicaCount: 1
+# Two replicas so a rollout, node drain, or single-pod crash is not a payment outage.
+replicaCount: 2
+terminationGracePeriodSeconds: 45
+security:
+  # Enable once gateway-backend sends X-Internal-Token on proxied requests.
+  requireInternalToken: false
+  # Swagger UI and the OpenAPI document are not served publicly in production.
+  exposeDocs: false
+kafka:
+  bootstrapServers: kafka-service.fitnest-production.svc.cluster.local:9092
 resources:
   requests:
     cpu: 200m

@@ -6,6 +6,13 @@ metadata:
     {{- include "app.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      # Never drop below the current replica count while rolling: payment callbacks from the
+      # bank must always have a pod to land on.
+      maxUnavailable: 0
+      maxSurge: 1
   selector:
     matchLabels:
       {{- include "app.selectorLabels" . | nindent 6 }}
@@ -15,6 +22,17 @@ spec:
         {{- include "app.selectorLabels" . | nindent 8 }}
     spec:
       serviceAccountName: {{ include "app.fullname" . }}
+      # Gives in-flight payment requests and callbacks time to finish before SIGKILL.
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds | default 45 }}
+      {{- if gt (int .Values.replicaCount) 1 }}
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              {{- include "app.selectorLabels" . | nindent 14 }}
+      {{- end }}
       {{- with .Values.image.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -40,7 +58,7 @@ spec:
             - name: SPRING_CLOUD_VAULT_ENABLED
               value: "true"
             - name: SPRING_CLOUD_VAULT_URI
-              value: "http://161.97.183.7:8200"
+              value: "https://vault.fitnest.az:8200"
             - name: SPRING_CLOUD_VAULT_AUTHENTICATION
               value: "APPROLE"
             - name: SPRING_CLOUD_VAULT_APP_ROLE_ROLE_ID
@@ -63,5 +81,45 @@ spec:
               value: {{ .Values.database.hikariMaxPool | quote }}
             - name: HIKARI_MIN_IDLE
               value: {{ .Values.database.hikariMinIdle | quote }}
+            {{- with .Values.security }}
+            - name: APP_SECURITY_REQUIRE_INTERNAL_TOKEN
+              value: {{ .requireInternalToken | default false | quote }}
+            - name: APP_SECURITY_EXPOSE_DOCS
+              value: {{ .exposeDocs | default false | quote }}
+            {{- end }}
+            {{- with .Values.kafka }}
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: {{ .bootstrapServers | quote }}
+            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          # The JVM needs time to boot before it can serve; the startup probe holds the other
+          # two off until then, so a slow start is not mistaken for a crash loop.
+          startupProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 3
+            successThreshold: 1
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 3
+          lifecycle:
+            preStop:
+              exec:
+                # Lets kube-proxy finish removing this pod from the Service endpoints before
+                # the JVM starts shutting down, avoiding connection resets mid-rollout.
+                command: ["sh", "-c", "sleep 8"]
