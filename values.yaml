@@ -12,7 +12,7 @@ image:
     - name: ghcr-secret
   pullPolicy: IfNotPresent
   repository: ghcr.io/fitnest-code/payment-backend
-  tag: production-b02a886
+  tag: production-4fc9d82
 networkPolicy:
   allowedServices:
     - user-backend
